@@ -25,4 +25,8 @@ public class Entity {
         if (!(o instanceof Entity entity)) return false;
         return languageFrom == entity.languageFrom && languageTo == entity.languageTo && wordFrom.equalsIgnoreCase(entity.wordFrom) && wordTo.equalsIgnoreCase(entity.wordTo);
     }
+
+    public Entity reverse() {
+        return new Entity(languageTo, wordTo, languageFrom, wordFrom);
+    }
 }

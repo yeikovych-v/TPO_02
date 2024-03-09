@@ -7,6 +7,7 @@ import pl.edu.s28201.tpo_02.model.Language;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class EntryRepository {
@@ -28,5 +29,12 @@ public class EntryRepository {
 
     public List<Entity> findAll() {
         return words;
+    }
+
+    public List<Entity> getMatchingTo(Entity entity) {
+        List<Entity> matchingFrom = words.stream().filter(word -> word.equals(entity)).collect(Collectors.toList());
+        List<Entity> matchingTo = words.stream().filter(word -> word.equals(entity.reverse())).toList();
+        matchingFrom.addAll(matchingTo);
+        return matchingFrom;
     }
 }
