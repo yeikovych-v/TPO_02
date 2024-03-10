@@ -1,6 +1,7 @@
 package pl.edu.s28201.tpo_02;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +18,8 @@ public class FlashCardsApp {
     private final FileService fileService;
     private final FlashCardsController controller;
     private final ApplicationContext appContext;
-
+    @Value("${pl.edu.pja.tpo02.filename}")
+    private String dictionaryPath;
     @Autowired
     public FlashCardsApp(FileService fileService, FlashCardsController controller, ApplicationContext appContext) {
         this.fileService = fileService;
@@ -36,7 +38,7 @@ public class FlashCardsApp {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            fileService.readFromCsv(new File("src/main/resources/csv/dictionary.csv"));
+            fileService.readFromCsv(new File(dictionaryPath));
             controller.listenToCommands();
             initiateShutdown();
         };

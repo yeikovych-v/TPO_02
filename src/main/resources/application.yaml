@@ -3,5 +3,9 @@ spring:
     active: upper
   banner:
     location: logo-app
-
+pl:
+  edu:
+    pja:
+      tpo02:
+        filename: src/main/resources/csv/dictionary.csv
 
