@@ -13,8 +13,8 @@ public class UpperCaseDisplayService implements DisplayService{
 
     @Override
     public boolean print(List<Entity> entities) {
-        entities.forEach(entity -> System.out.println(entity.getLanguageFrom() + ": "
-                + entity.getWordFrom().toUpperCase() + " <> " + entity.getLanguageTo() + ": " + entity.getWordTo().toUpperCase()));
+        entities.forEach(entity -> System.out.println("ENG: " + entity.getWordEnglish().toUpperCase()
+                + " <> GER: "  + entity.getWordGerman().toUpperCase() + " <> POL: " + entity.getWordPolish().toUpperCase()));
         System.out.println();
         return true;
     }

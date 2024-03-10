@@ -12,8 +12,8 @@ import java.util.List;
 public class LowerCaseDisplayService implements DisplayService{
     @Override
     public boolean print(List<Entity> entities) {
-        entities.forEach(entity -> System.out.println(entity.getLanguageFrom() + ": "
-                + entity.getWordFrom().toLowerCase() + " <> " + entity.getLanguageTo() + ": " + entity.getWordTo().toLowerCase()));
+        entities.forEach(entity -> System.out.println("ENG: " + entity.getWordEnglish().toLowerCase()
+                + " <> GER: "  + entity.getWordGerman().toLowerCase() + " <> POL: " + entity.getWordPolish().toLowerCase()));
         System.out.println();
         return true;
     }

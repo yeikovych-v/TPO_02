@@ -9,11 +9,11 @@ import java.util.List;
 
 @Profile("default")
 @Service
-public class DefaultDisplayService implements DisplayService{
+public class DefaultDisplayService implements DisplayService {
     @Override
     public boolean print(List<Entity> entities) {
-        entities.forEach(entity -> System.out.println(entity.getLanguageFrom() + ": "
-                + entity.getWordFrom() + " <> " + entity.getLanguageTo() + ": " + entity.getWordTo()));
+        entities.forEach(entity -> System.out.println("ENG: " + entity.getWordEnglish()
+                + " <> GER: "  + entity.getWordGerman() + " <> POL: " + entity.getWordPolish()));
         System.out.println();
         return true;
     }
