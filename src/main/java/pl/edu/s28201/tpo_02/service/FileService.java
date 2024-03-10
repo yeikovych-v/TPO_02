@@ -2,6 +2,7 @@ package pl.edu.s28201.tpo_02.service;
 
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.edu.s28201.tpo_02.exception.FileFormatException;
 import pl.edu.s28201.tpo_02.model.Entry;
@@ -16,13 +17,16 @@ public class FileService {
     private final EntryRepository entryRepository;
     private File csvFile;
 
+    @Value("${pl.edu.pja.tpo02.filename}")
+    private String dictionaryPath;
+
     @Autowired
     public FileService(EntryRepository entryRepository) {
         this.entryRepository = entryRepository;
     }
 
-    public void readFromCsv(File file) throws IOException {
-        csvFile = file;
+    public void readFromCsv() throws IOException {
+        csvFile = new File(dictionaryPath);
         try (BufferedReader read = new BufferedReader(new FileReader(csvFile, Charset.forName("CP1252")))) {
             String line;
             while ((line = read.readLine()) != null) {

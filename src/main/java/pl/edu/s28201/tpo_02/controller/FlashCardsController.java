@@ -18,12 +18,11 @@ import java.util.*;
 public class FlashCardsController {
     private final EntryRepository entryRepository;
     private final FileService fileService;
+    private final DisplayService displayService;
     private final BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
     @Value("${spring.profiles.active}")
     private String ACTIVE_PROFILE;
-
-    private DisplayService displayService;
 
     @Autowired
     public FlashCardsController(EntryRepository entryRepository, FileService fileService, DisplayService displayService) {
@@ -33,6 +32,7 @@ public class FlashCardsController {
     }
 
     public void listenToCommands() throws IOException {
+        fileService.readFromCsv();
         System.out.println("PROFILE TYPE: " + ACTIVE_PROFILE);
         System.out.println("Use 'help' command for reference.");
         System.out.print("Type your command here: ");
