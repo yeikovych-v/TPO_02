@@ -2,6 +2,7 @@ package pl.edu.s28201.tpo_02.controller;
 
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import pl.edu.s28201.tpo_02.model.Entry;
@@ -11,7 +12,6 @@ import pl.edu.s28201.tpo_02.service.FileService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 @Controller
@@ -19,16 +19,17 @@ public class FlashCardsController {
     private final EntryRepository entryRepository;
     private final FileService fileService;
     private final DisplayService displayService;
-    private final BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+    private final BufferedReader console;
 
     @Value("${spring.profiles.active}")
     private String ACTIVE_PROFILE;
 
     @Autowired
-    public FlashCardsController(EntryRepository entryRepository, FileService fileService, DisplayService displayService) {
+    public FlashCardsController(EntryRepository entryRepository, FileService fileService, DisplayService displayService, @Qualifier("getConsoleReader") BufferedReader console) {
         this.entryRepository = entryRepository;
         this.fileService = fileService;
         this.displayService = displayService;
+        this.console = console;
     }
 
     public void listenToCommands() throws IOException {
