@@ -4,7 +4,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.s28201.tpo_02.exception.FileFormatException;
-import pl.edu.s28201.tpo_02.model.Entity;
+import pl.edu.s28201.tpo_02.model.Entry;
 import pl.edu.s28201.tpo_02.repository.EntryRepository;
 
 import java.io.*;
@@ -26,19 +26,19 @@ public class FileService {
         try (BufferedReader read = new BufferedReader(new FileReader(csvFile, Charset.forName("CP1252")))) {
             String line;
             while ((line = read.readLine()) != null) {
-                entryRepository.addEntity(parseCsvLineToEntity(line));
+                entryRepository.addEntry(parseCsvLineToEntry(line));
             }
         }
     }
 
-    private Entity parseCsvLineToEntity(String line) {
+    private Entry parseCsvLineToEntry(String line) {
         String[] values = line.split(";");
         if (values.length != 3) throw new FileFormatException("Invalid number of arguments for dictionary csv file.");
-        return new Entity(values[0], values[1], values[2]);
+        return new Entry(values[0], values[1], values[2]);
     }
 
-    public void addToCsv(Entity entity) {
-        writeToCsv(parseEntityToCsvLine(entity));
+    public void addToCsv(Entry entry) {
+        writeToCsv(parseEntryToCsvLine(entry));
     }
 
     @SneakyThrows
@@ -48,7 +48,7 @@ public class FileService {
         }
     }
 
-    private String parseEntityToCsvLine(Entity entity) {
-        return entity.getWordEnglish() + ";" + entity.getWordGerman() + ";" + entity.getWordPolish() + "\n";
+    private String parseEntryToCsvLine(Entry entry) {
+        return entry.getWordEnglish() + ";" + entry.getWordGerman() + ";" + entry.getWordPolish() + "\n";
     }
 }

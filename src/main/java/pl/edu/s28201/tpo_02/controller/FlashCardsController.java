@@ -4,7 +4,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import pl.edu.s28201.tpo_02.model.Entity;
+import pl.edu.s28201.tpo_02.model.Entry;
 import pl.edu.s28201.tpo_02.repository.EntryRepository;
 import pl.edu.s28201.tpo_02.service.DisplayService;
 import pl.edu.s28201.tpo_02.service.FileService;
@@ -64,7 +64,7 @@ public class FlashCardsController {
     }
 
     private boolean executeTest() {
-        Entity random = getRandomEntity();
+        Entry random = getRandomEntry();
 
         List<Integer> choices = new ArrayList<>(List.of(0, 1, 2));
         int randLangTest = new Random().nextInt(0, 3);
@@ -82,7 +82,7 @@ public class FlashCardsController {
     }
 
     @SneakyThrows
-    private void readAndDisplayTestResult(int langIndex, String testWord, String testLang, Entity random) {
+    private void readAndDisplayTestResult(int langIndex, String testWord, String testLang, Entry random) {
         String answerWord = langIndex == 0 ? random.getWordEnglish() : (langIndex == 1 ? random.getWordGerman() : random.getWordPolish());
         String answerLang = langIndex == 0 ? "English" : (langIndex == 1 ? "German" : "Polish");
 
@@ -100,15 +100,15 @@ public class FlashCardsController {
         }
     }
 
-    private Entity getRandomEntity() {
-        List<Entity> availableWords = entryRepository.findAll();
+    private Entry getRandomEntry() {
+        List<Entry> availableWords = entryRepository.findAll();
         return availableWords.get(new Random().nextInt(0, availableWords.size()));
     }
 
     private boolean executeAdd(String wordEng, String wordGe, String wordPol) {
-        Entity newWord = new Entity(wordEng, wordGe, wordPol);
+        Entry newWord = new Entry(wordEng, wordGe, wordPol);
 
-        entryRepository.addEntity(newWord);
+        entryRepository.addEntry(newWord);
         fileService.addToCsv(newWord);
 
         return true;
@@ -118,7 +118,7 @@ public class FlashCardsController {
         System.out.println("Commands List: ------------------------------->");
         System.out.println("help   <> list available commands.");
         System.out.println("print   <> print all words in csv.");
-        System.out.println("add englishWord germanWord polishWord  <> add new entity to dictionary.");
+        System.out.println("add englishWord germanWord polishWord  <> add new entry to dictionary.");
         System.out.println("testme  <> display random word from dictionary, after which you will need to write the translation in required language.");
         System.out.println("---------------------------------------------->");
         return true;

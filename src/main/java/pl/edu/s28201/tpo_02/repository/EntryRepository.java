@@ -1,7 +1,7 @@
 package pl.edu.s28201.tpo_02.repository;
 
 import org.springframework.stereotype.Repository;
-import pl.edu.s28201.tpo_02.model.Entity;
+import pl.edu.s28201.tpo_02.model.Entry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,18 +9,18 @@ import java.util.List;
 @Repository
 public class EntryRepository {
 
-    private final List<Entity> words = new ArrayList<>();
+    private final List<Entry> words = new ArrayList<>();
 
-    public boolean addEntity(Entity entity) {
-        if (hasEntity(entity)) return false;
-        else return words.add(entity);
+    public boolean addEntry(Entry entry) {
+        if (hasEntry(entry)) return false;
+        else return words.add(entry);
     }
 
-    public boolean hasEntity(Entity entity) {
-        return words.stream().anyMatch(e -> e.equals(entity));
+    public boolean hasEntry(Entry entry) {
+        return words.stream().anyMatch(e -> e.equals(entry));
     }
 
-    public List<Entity> findAll() {
+    public List<Entry> findAll() {
         return words;
     }
 }
