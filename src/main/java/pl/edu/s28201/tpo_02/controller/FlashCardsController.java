@@ -1,14 +1,16 @@
 package pl.edu.s28201.tpo_02.controller;
 
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import pl.edu.s28201.tpo_02.model.Entry;
+import pl.edu.s28201.tpo_02.model.Language;
+import pl.edu.s28201.tpo_02.model.SortingType;
 import pl.edu.s28201.tpo_02.repository.EntryRepository;
-import pl.edu.s28201.tpo_02.service.DisplayService;
+import pl.edu.s28201.tpo_02.service.EntrySortingService;
 import pl.edu.s28201.tpo_02.service.FileService;
+import pl.edu.s28201.tpo_02.service.PrintingService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,17 +20,21 @@ import java.util.*;
 public class FlashCardsController {
     private final EntryRepository entryRepository;
     private final FileService fileService;
-    private final DisplayService displayService;
+
+    private final PrintingService printingService;
+
+    private final EntrySortingService entrySortingService;
     private final BufferedReader console;
 
     @Value("${spring.profiles.active}")
     private String ACTIVE_PROFILE;
 
     @Autowired
-    public FlashCardsController(EntryRepository entryRepository, FileService fileService, DisplayService displayService, @Qualifier("getConsoleReader") BufferedReader console) {
+    public FlashCardsController(EntryRepository entryRepository, FileService fileService, PrintingService printingService, EntrySortingService entrySortingService, @Qualifier("getConsoleReader") BufferedReader console) {
         this.entryRepository = entryRepository;
         this.fileService = fileService;
-        this.displayService = displayService;
+        this.printingService = printingService;
+        this.entrySortingService = entrySortingService;
         this.console = console;
     }
 
@@ -47,11 +53,11 @@ public class FlashCardsController {
         }
     }
 
-    private boolean executeCommand(String command) {
+    private boolean executeCommand(String command) throws IOException {
         command = command.trim();
         String[] splitCommands = command.split("\\s");
         return switch (splitCommands[0]) {
-            case "print" -> displayService.print(entryRepository.findAll());
+            case "print" -> executePrint(entryRepository.findAll());
             case "help" -> executeHelp();
             case "add" -> {
                 if (splitCommands.length == 4) {
@@ -60,11 +66,34 @@ public class FlashCardsController {
                 yield false;
             }
             case "testme" -> executeTest();
+            case "sort" -> {
+                if (splitCommands.length == 3) yield executeSort(splitCommands[1], splitCommands[2]);
+                yield false;
+            }
             default -> false;
         };
     }
 
-    private boolean executeTest() {
+    private boolean executePrint(List<Entry> entries) {
+        entries.forEach(entry -> {
+            System.out.println("ENG: " + printingService.process(entry.getWordEnglish()) + " <> DEU: " +
+                    printingService.process(entry.getWordPolish()) + " <> " +
+                    printingService.process(entry.getWordPolish()));
+        });
+        return true;
+    }
+
+    private boolean executeSort(String lan, String sortingType) {
+        List<Entry> words = entryRepository.findAll();
+        Language language = Language.valueOf(lan.toUpperCase());
+        SortingType type = SortingType.valueOf(sortingType.toUpperCase());
+        return switch (type) {
+            case ASC -> executePrint(entrySortingService.sortByLanguageAsc(language, words));
+            case DESC -> executePrint(entrySortingService.sortByLanguageDesc(language, words));
+        };
+    }
+
+    private boolean executeTest() throws IOException {
         Entry random = getRandomEntry();
 
         List<Integer> choices = new ArrayList<>(List.of(0, 1, 2));
@@ -82,12 +111,12 @@ public class FlashCardsController {
         return true;
     }
 
-    @SneakyThrows
-    private void readAndDisplayTestResult(int langIndex, String testWord, String testLang, Entry random) {
+    private void readAndDisplayTestResult(int langIndex, String testWord, String testLang, Entry random) throws IOException {
         String answerWord = langIndex == 0 ? random.getWordEnglish() : (langIndex == 1 ? random.getWordGerman() : random.getWordPolish());
         String answerLang = langIndex == 0 ? "English" : (langIndex == 1 ? "German" : "Polish");
 
-        System.out.println("What does the word {" + testWord + "} from language [" + testLang + "] mean in [" + answerLang + "] language.");
+        System.out.println("What does the word {" + printingService.process(testWord) + "} from language ["
+                + printingService.process(testLang) + "] mean in [" + printingService.process(answerLang) + "] language.");
 
         System.out.print("Type " + answerLang + " translation here: ");
         String answer = console.readLine().trim();
@@ -106,7 +135,7 @@ public class FlashCardsController {
         return availableWords.get(new Random().nextInt(0, availableWords.size()));
     }
 
-    private boolean executeAdd(String wordEng, String wordGe, String wordPol) {
+    private boolean executeAdd(String wordEng, String wordGe, String wordPol) throws IOException {
         Entry newWord = new Entry(wordEng, wordGe, wordPol);
 
         entryRepository.addEntry(newWord);
@@ -117,10 +146,11 @@ public class FlashCardsController {
 
     private boolean executeHelp() {
         System.out.println("Commands List: ------------------------------->");
-        System.out.println("help   <> list available commands.");
-        System.out.println("print   <> print all words in csv.");
+        System.out.println("help   <>  list available commands.");
+        System.out.println("print   <>  print all words in csv.");
         System.out.println("add englishWord germanWord polishWord  <> add new entry to dictionary.");
-        System.out.println("testme  <> display random word from dictionary, after which you will need to write the translation in required language.");
+        System.out.println("testme  <>  display random word from dictionary, after which you will need to write the translation in required language.");
+        System.out.println("sort lang desc <>  sort by langauge. First parameter means language (pl, en, de). Second means descending or ascending order (asc or desc).");
         System.out.println("---------------------------------------------->");
         return true;
     }

@@ -1,6 +1,5 @@
 package pl.edu.s28201.tpo_02.service;
 
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,8 @@ import java.io.*;
 public class FileService {
 
     private final EntryRepository entryRepository;
-    private BufferedReader read;
-    private BufferedWriter write;
+    private final BufferedReader read;
+    private final BufferedWriter write;
 
     @Autowired
     public FileService(EntryRepository entryRepository, @Qualifier("getFileReader") BufferedReader read, BufferedWriter write) {
@@ -37,12 +36,11 @@ public class FileService {
         return new Entry(values[0], values[1], values[2]);
     }
 
-    public void addToCsv(Entry entry) {
+    public void addToCsv(Entry entry) throws IOException {
         writeToCsv(parseEntryToCsvLine(entry));
     }
 
-    @SneakyThrows
-    public void writeToCsv(String line) {
+    public void writeToCsv(String line) throws IOException {
         write.write(line);
     }
 
