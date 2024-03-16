@@ -211,6 +211,12 @@ public class FlashCardsController {
 
         Entry toModify = optionalWord.get();
         Entry modified = modifyEntry(toModify, language, wordAfterMod);
+
+        if (!isUniqueValue(language, wordAfterMod)) {
+            printEntryNotUniqueMessage(modified);
+            return true;
+        }
+
         entryRepository.updateEntryById(toModify.getId(), modified);
         printEntryModifiedMessage(toModify, modified);
 
@@ -303,5 +309,13 @@ public class FlashCardsController {
         return entryRepository.findByWordEnglish(newWord.getWordEnglish()).isEmpty() &&
                 entryRepository.findByWordGerman(newWord.getWordGerman()).isEmpty() &&
                 entryRepository.findByWordPolish(newWord.getWordPolish()).isEmpty();
+    }
+
+    private boolean isUniqueValue(Language language, String word) {
+        return switch (language) {
+            case EN -> entryRepository.findByWordEnglish(word).isEmpty();
+            case DE -> entryRepository.findByWordGerman(word).isEmpty();
+            case PL -> entryRepository.findByWordPolish(word).isEmpty();
+        };
     }
 }
