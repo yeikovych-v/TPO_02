@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.EntityManagerFactoryAccessor;
 import org.springframework.stereotype.Repository;
 import pl.edu.s28201.tpo_02.model.Entry;
 import pl.edu.s28201.tpo_02.model.Language;
@@ -33,6 +34,7 @@ public class EntryHibernateRepository {
         return entityManager.createQuery(query).getResultList();
     }
 
+    @Transactional
     public void saveAll(List<Entry> entries) {
         entries.forEach(this::save);
     }
