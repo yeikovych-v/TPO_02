@@ -1,11 +1,20 @@
 package pl.edu.s28201.tpo_02.model;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
 public class Entry {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true)
     private String wordEnglish;
+    @Column(unique = true)
     private String wordGerman;
+    @Column(unique = true)
     private String wordPolish;
 
 
@@ -13,6 +22,10 @@ public class Entry {
         this.wordEnglish = wordEnglish;
         this.wordGerman = wordGerman;
         this.wordPolish = wordPolish;
+    }
+
+    public Entry() {
+
     }
 
     @Override
@@ -25,7 +38,8 @@ public class Entry {
     @Override
     public String toString() {
         return "Entry{" +
-                "wordEnglish='" + wordEnglish + '\'' +
+                "id=" + id +
+                ", wordEnglish='" + wordEnglish + '\'' +
                 ", wordGerman='" + wordGerman + '\'' +
                 ", wordPolish='" + wordPolish + '\'' +
                 '}';
@@ -60,4 +74,7 @@ public class Entry {
         return Objects.hash(wordEnglish, wordGerman, wordPolish);
     }
 
+    public Long getId() {
+        return id;
+    }
 }
