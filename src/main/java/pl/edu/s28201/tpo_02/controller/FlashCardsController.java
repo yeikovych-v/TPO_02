@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import pl.edu.s28201.tpo_02.model.Entry;
 import pl.edu.s28201.tpo_02.model.Language;
 import pl.edu.s28201.tpo_02.model.SortingType;
-import pl.edu.s28201.tpo_02.repository.EntrySpringDataRepository;
+import pl.edu.s28201.tpo_02.repository.EntryHibernateRepository;
 import pl.edu.s28201.tpo_02.service.sorting.EntrySortingService;
 import pl.edu.s28201.tpo_02.service.mock.EntryMockService;
 import pl.edu.s28201.tpo_02.service.printing.PrintingService;
@@ -17,7 +17,7 @@ import java.util.*;
 
 @Controller
 public class FlashCardsController {
-    private final EntrySpringDataRepository entryRepository;
+    private final EntryHibernateRepository entryRepository;
     private final PrintingService printingService;
     private final EntrySortingService entrySortingService;
     private final EntryMockService entryMockService;
@@ -27,7 +27,7 @@ public class FlashCardsController {
     private String ACTIVE_PROFILE;
 
     @Autowired
-    public FlashCardsController(EntrySpringDataRepository entryRepository,
+    public FlashCardsController(EntryHibernateRepository entryRepository,
                                 PrintingService printingService,
                                 EntrySortingService entrySortingService,
                                 EntryMockService entryMockService,
@@ -211,6 +211,12 @@ public class FlashCardsController {
 
         Entry toModify = optionalWord.get();
         Entry modified = modifyEntry(toModify, language, wordAfterMod);
+
+        if (!isUniqueValue(language, wordAfterMod)) {
+            printEntryNotUniqueMessage(modified);
+            return true;
+        }
+
         entryRepository.updateEntryById(toModify.getId(), modified);
         printEntryModifiedMessage(toModify, modified);
 
@@ -303,5 +309,13 @@ public class FlashCardsController {
         return entryRepository.findByWordEnglish(newWord.getWordEnglish()).isEmpty() &&
                 entryRepository.findByWordGerman(newWord.getWordGerman()).isEmpty() &&
                 entryRepository.findByWordPolish(newWord.getWordPolish()).isEmpty();
+    }
+
+    private boolean isUniqueValue(Language language, String word) {
+        return switch (language) {
+            case EN -> entryRepository.findByWordEnglish(word).isEmpty();
+            case DE -> entryRepository.findByWordGerman(word).isEmpty();
+            case PL -> entryRepository.findByWordPolish(word).isEmpty();
+        };
     }
 }
