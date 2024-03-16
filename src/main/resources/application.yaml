@@ -3,9 +3,16 @@ spring:
     active: upper
   banner:
     location: logo-app
-pl:
-  edu:
-    pja:
-      tpo02:
-        filename: src/main/resources/csv/dictionary.csv
+  h2:
+    console:
+      path: /h2
+  datasource:
+    url: jdbc:h2:file:./db/flashcards
+    username: s28201
+    password: cards
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+
 
