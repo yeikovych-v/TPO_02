@@ -1,4 +1,4 @@
-package pl.edu.s28201.tpo_02.service;
+package pl.edu.s28201.tpo_02.service.sorting;
 
 import org.springframework.stereotype.Service;
 import pl.edu.s28201.tpo_02.model.Entry;
